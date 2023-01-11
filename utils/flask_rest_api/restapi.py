@@ -9,9 +9,16 @@ import io
 import torch
 from flask import Flask, request
 from PIL import Image
+from pathlib import Path
+
+from models.common import DetectMultiBackend, AutoShape
+
+FILE = Path(__file__).resolve()
+ROOT = FILE.parents[0]
 
 app = Flask(__name__)
-models = {}
+model = AutoShape(DetectMultiBackend(ROOT / 'best.pt', device='cpu', dnn=False, fp16=False))
+models = {'v1_model': model}
 
 DETECTION_URL = "/v1/object-detection/<model>"
 
@@ -21,14 +28,18 @@ def predict(model):
     if request.method != "POST":
         return
 
-    if request.files.get("image"):
+    if request.data:
         # Method 1
         # with request.files["image"] as f:
         #     im = Image.open(io.BytesIO(f.read()))
 
         # Method 2
-        im_file = request.files["image"]
-        im_bytes = im_file.read()
+        # im_file = request.files["image"]
+        # im_bytes = im_file.read()
+        # im = Image.open(io.BytesIO(im_bytes))
+
+        #Method 3
+        im_bytes = request.data
         im = Image.open(io.BytesIO(im_bytes))
 
         if model in models:
