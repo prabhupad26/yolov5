@@ -20,6 +20,7 @@
 *.data
 *.json
 *.cfg
+*.mkv
 !setup.cfg
 !cfg/yolov3*.cfg
 
