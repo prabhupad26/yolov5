@@ -1,0 +1,202 @@
+<!-- This is a home page for traffic management simulation -->
+<html>
+<head>
+    <link href="https://vjs.zencdn.net/8.0.4/video-js.css" rel="stylesheet" />
+    <title>Home Page</title>
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='images/t-junction_background.jpg') }}");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://vjs.zencdn.net/8.0.4/video.min.js"></script>
+    <!-- The loading overlay -->
+    <div id="loading-overlay">
+        <div class="spinner-border text-primary" role="status">
+            <img id="loader_img" src="{{ url_for('static', filename='images/traffic-police-loader.gif') }}" alt="">
+        </div>
+    </div>
+    <!-- Drop down for mode of simulation -->
+    <div id="dd_container">
+        <label for="options">Select the mode of simulation</label>
+        <select id="capability_option">
+            <option value="option1">Without AI capability</option>
+            <option value="option2">With AI capability</option>
+        </select>
+    </div>
+    <div id="dd_models">
+        <label for="options">Select the computer vision model</label>
+        <select id="model_type">
+            <option value="yolov5">yolov5</option>
+            <option value="yolov8">yolov8(roboflow)</option>
+        </select>
+    </div>
+    <div id="dd_exec_mode">
+        <label>
+            <input type="radio" name="radio_btn" value="image_mode"> Image mode
+        </label>
+        <label>
+            <input type="radio" name="radio_btn" value="video_mode"> Video mode
+        </label>
+    </div>
+    <!-- Main container -->
+    <div id="contents" width="100%" height="100%">
+        <img id="stl_1" src="{{ url_for('static', filename='images/trafficLight_green.png') }}" alt="">
+        <img id="stl_2" src="{{ url_for('static', filename='images/trafficLight_red.png') }}" alt="">
+        <div>
+            <h2><span id="timer_stl_1">00:00</span></h2>
+        </div>
+        <div>
+            <h2><span id="timer_stl_2">00:00</span></h2>
+        </div>
+
+        <div id="media-container">
+            <div id="video_main">
+                <div id="video_container_lane1" class="lane_video_container">
+                    <video
+                    id="video_stl_1"
+                    class="video-js vjs-big-play-centered"
+                    controls
+                    preload="auto"
+                    width="450"
+                    height="350"
+                    data-setup="{}">
+                        <source src="{{ url_for('static', filename='videos/scenario_1/lane_1_feed_user1.mp4') }}" type="video/mp4" />
+                        <p class="vjs-no-js">
+                        To view this video please enable JavaScript, and consider upgrading to a
+                        web browser that
+                            <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                        </p>
+                    </video>
+                </div>
+                <div id="video_container_lane2" class="lane_video_container">
+                    <video
+                    id="video_stl_2"
+                    class="video-js"
+                    controls
+                    preload="auto"
+                    width="450"
+                    height="350"
+                    data-setup="{}">
+                        <source src="{{ url_for('static', filename='videos/scenario_1/lane_2_feed_user1.mp4') }}" type="video/mp4" />
+                        <p class="vjs-no-js">
+                        To view this video please enable JavaScript, and consider upgrading to a
+                        web browser that
+                            <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                        </p>
+                    </video>
+                </div>
+            </div>
+
+            <div id="img_main">
+                <div id="image_container_lane1" class="lane_image_container">
+                    <img id="img_lane1" src="{{ url_for('static', filename='videos/scenario_1_image_mode/lane_1_feed_user1.jpg') }}" alt="" width="450" height="350">
+                </div>
+                <div id="image_container_lane2" class="lane_image_container">
+                    <img id="img_lane2" src="{{ url_for('static', filename='videos/scenario_1_image_mode/lane_2_feed_user1.jpg') }}" alt="" width="450" height="350">
+                </div>
+            </div>
+        </div>
+        
+        <form id="lane1_feed">
+            <div>
+                <label for="files" class="btn" style="z-index:2; position:absolute; top:66%; left:2%">UPLOAD LANE 1 VIDEO</label>
+                <input id="input_lane1_feed"   style="z-index:2; position:absolute; top:69%; left:2%" type="file">
+                <input style="z-index:2; position:absolute; top:72%; left:2%" type="submit" value="Upload">
+            </div>
+        </form>
+        <form id="lane2_feed">
+            <div>
+                <label for="files" class="btn" style="z-index:2; position:absolute; top:96%; left:57%">UPLOAD LANE 2 VIDEO</label>
+                <input id="input_lane2_feed" style="z-index:2; position:absolute; top:99%; left:57%" type="file">
+                <input style="z-index:2; position:absolute; top:102%; left:57%" type="submit" value="Upload">
+            </div>
+        </form>        
+    </div>
+    <button id="play_btn" style="z-index:2; position:absolute; top:2%; left:96%">PLAY!</button>
+</body>
+<script type="application/javascript" src="{{ url_for('static', filename='js/base.js') }}"></script>
+<style>
+    #video_container_lane1{
+        top: 33%;
+        position: absolute;
+    }
+    #video_container_lane2{
+        top:73%;
+        left: 39%;
+        position: absolute;
+    }
+    #stl_1{
+        top:17%;
+        left: 37%;
+        position: absolute;
+        width: 50px;
+        height: 200px;
+    }
+    #stl_2{
+        top:50%;
+        left: 52%;
+        position: absolute;
+        width: 50px;
+        height: 200px;
+    }
+    #timer_stl_1{
+        top:14%;
+        left: 37%;
+        position: absolute;
+    }
+    #timer_stl_2{
+        top:46%;
+        left: 52%;
+        position: absolute;
+    }
+    #dd_container{
+        top:2%;
+        left: 74%;
+        position: absolute;
+    }
+    #dd_models{
+        top:2%;
+        left: 53%;
+        position: absolute;
+    }
+    #loading-overlay {
+        position: absolute;
+        z-index: 9999;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+    }
+    #loading-overlay .spinner-border {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    #loader_img{
+        top: -119px ;
+        left: -107px ;
+        width: 140px ;
+        position: absolute;
+    }
+    #media-container {
+        display: none;
+    }
+    #image_container_lane1{
+        position: absolute;
+        top: 18%;
+    }
+    #image_container_lane2{
+        position: absolute;
+        top: 67%;
+        left: 38%;
+    }
+
+</style>
+   
