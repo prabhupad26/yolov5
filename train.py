@@ -478,6 +478,7 @@ def parse_opt(known=False):
 
 
 def main(opt, callbacks=Callbacks()):
+    final_results = None
     # Checks
     if RANK in {-1, 0}:
         print_args(vars(opt))
@@ -525,7 +526,7 @@ def main(opt, callbacks=Callbacks()):
 
     # Train
     if not opt.evolve:
-        train(opt.hyp, opt, device, callbacks)
+        final_results = train(opt.hyp, opt, device, callbacks)
 
     # Evolve hyperparameters (optional)
     else:
@@ -606,18 +607,19 @@ def main(opt, callbacks=Callbacks()):
                 hyp[k] = round(hyp[k], 5)  # significant digits
 
             # Train mutation
-            results = train(hyp.copy(), opt, device, callbacks)
+            final_results = train(hyp.copy(), opt, device, callbacks)
             callbacks = Callbacks()
             # Write mutation results
             keys = ('metrics/precision', 'metrics/recall', 'metrics/mAP_0.5', 'metrics/mAP_0.5:0.95', 'val/box_loss',
                     'val/obj_loss', 'val/cls_loss')
-            print_mutation(keys, results, hyp.copy(), save_dir, opt.bucket)
+            print_mutation(keys, final_results, hyp.copy(), save_dir, opt.bucket)
 
         # Plot results
         plot_evolve(evolve_csv)
         LOGGER.info(f'Hyperparameter evolution finished {opt.evolve} generations\n'
                     f"Results saved to {colorstr('bold', save_dir)}\n"
                     f'Usage example: $ python train.py --hyp {evolve_yaml}')
+    return final_results
 
 
 def run(**kwargs):
